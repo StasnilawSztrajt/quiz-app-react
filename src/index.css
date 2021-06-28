@@ -1,3 +1,70 @@
+/*
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.quiz-flex{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #000;
+  height: 80vh;
+}
+
+.quiz, .result{
+  width: 50vw;
+  height: 60vh;
+  background-color: rgb(100, 100, 100);
+  border-radius: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.quiz .answers{
+  display: flex;
+  flex-direction: column;
+}
+
+.quiz .answers .answer{
+  margin-top: 5vh;
+  width: 20vw;
+  height: 5vh;
+  font-size: 2rem;
+  background-color: #000;
+  color: rgb(145, 141, 141);
+  transition: .3s opacity;
+  cursor: pointer;
+}
+
+.quiz .answers .answer:hover{
+  opacity: .7;
+}
+
+.quiz .answers .correct{
+  background-color: green;
+}
+
+.quiz .answers .wrong{
+  background-color: red;
+}
+.correct{
+  background-color: green;
+}
+.wrong{
+  background-color: red;
+}
+
+.result {
+
+} */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -5,9 +72,10 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #000;
+  color: rgb(204, 202, 202);
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.input-create-answer{
+  @apply w-4/12 text-xl p-1 mt-10 text-black rounded
 }
