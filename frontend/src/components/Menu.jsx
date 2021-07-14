@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom';
 
-const Nav = () =>{
+const Menu = () =>{
     return(
         <nav className="flex justify-around text-2xl">
             <Link to="/">Quizapp</Link>
@@ -12,4 +12,4 @@ const Nav = () =>{
     )
 }
 
-export default Nav;
+export default Menu;
