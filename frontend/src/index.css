@@ -1,81 +1,53 @@
-/*
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
-
-.quiz-flex{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #000;
-  height: 80vh;
-}
-
-.quiz, .result{
-  width: 50vw;
-  height: 60vh;
-  background-color: rgb(100, 100, 100);
-  border-radius: 25px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.quiz .answers{
-  display: flex;
-  flex-direction: column;
-}
-
-.quiz .answers .answer{
-  margin-top: 5vh;
-  width: 20vw;
-  height: 5vh;
-  font-size: 2rem;
-  background-color: #000;
-  color: rgb(145, 141, 141);
-  transition: .3s opacity;
-  cursor: pointer;
-}
-
-.quiz .answers .answer:hover{
-  opacity: .7;
-}
-
-.quiz .answers .correct{
-  background-color: green;
-}
-
-.quiz .answers .wrong{
-  background-color: red;
-}
-.correct{
-  background-color: green;
-}
-.wrong{
-  background-color: red;
-}
-
-.result {
-
-} */
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 body {
   margin: 0;
+  padding: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #000;
-  color: rgb(204, 202, 202);
+  background: #6ee7b7;
+}
+
+.menu-element{
+  @apply flex flex-col justify-center items-center h-full px-4 text-xl text-gray-600 hover:shadow-inner hover:bg-gray-200 transition duration-100;
+}
+
+.login-register-input {
+  @apply w-full h-11 bg-white text-base text-gray-700 outline-none pl-12 pr-2 my-2 placeholder-gray-500 border border-gray-300 shadow-inner
+  focus:shadow focus:border-green-600 transition duration-200 rounded;
+}
+
+.login-register-input-box {
+  @apply mb-4 text-xs text-gray-500 font-bold relative;
+}
+
+.login-register-input-icon {
+  @apply absolute border-r border-gray-200 left-2 bottom-4 py-1 pl-1 pr-2 text-green-600;
+}
+
+/* create-quiz */
+
+.create-quiz-button{
+  @apply w-1/4 p-3 text-2xl mt-8 bg-white border-2 border-green-500 rounded-lg focus:outline-none hover:opacity-80 duration-100
 }
 
 .input-create-answer{
-  @apply w-4/12 text-xl p-1 mt-10 text-black rounded
+  @apply w-3/4 text-xl p-2 mt-4 text-black rounded focus:outline-none
+}
+
+/* dashboard */
+
+.dashboard-element{
+  @apply w-1/2 bg-white text-2xl mt-6 p-4
+}
+
+/* buttons */
+
+.button-animation{
+  @apply hover:opacity-80 duration-100
 }

@@ -5,8 +5,8 @@ import { useHistory } from "react-router-dom";
 import { Link } from 'react-router-dom';
 import QuizEditLayer from '../components/QuizEditLayer';
 
-
-const API_URL = 'http://localhost:1337';
+import API_URL from '../API_URL';
+import ValidationAlert from '../components/ValidationAlert';
 
 const Dashboard = () =>{
   const history = useHistory();
@@ -18,8 +18,8 @@ const Dashboard = () =>{
   const[userInfo, setUserInfo] = useState({})
   const[userQuizzes, setUserQuizzes] = useState([])
   const[isShowQuizEditLayer, setIsShowQuizEditLayer] = useState(false)
-
-  const[used, setUsed] = useState(false)
+  const[isShowQuizDeleteLayer, setIsShowQuizDeleteLayer] = useState(false)
+  const[idDeleteQuiz, setIdDeleteQuiz] = useState()
 
   const[valueInputTitle, setValueInputTitle] = useState('');
   const[valueInputQuestion, setValueInputQuestion] = useState('');
@@ -34,7 +34,7 @@ const Dashboard = () =>{
   const[questions,setQuestions] = useState([{title: ''}]);
   const[numberQuestion, setNumberQuestion] = useState(1);
 
-  const[activeIdQuiz, setActiveQuiz] = useState()
+  const[idEditQuiz, setEditQuiz] = useState()
 
   const inputHandleForTitle = (e) =>{
     const newValue = e.target.value;
@@ -61,6 +61,15 @@ const Dashboard = () =>{
     setValueInputThirdAnswer(newValue);
   }
 
+  const setInputsValue = () =>{
+    setValueInputTitle(questions[0].title);
+    setValueInputQuestion(questions[numberQuestion].question);
+    setValueInputCorrectAnswer(questions[numberQuestion].correctAnswer);
+    setValueInputFirstAnswer(questions[numberQuestion].answers[0].answer);
+    setValueInputSecondAnswer(questions[numberQuestion].answers[1].answer);
+    setValueInputThirdAnswer(questions[numberQuestion].answers[2].answer);
+  }
+
   useLayoutEffect(() =>{
     if(!cookies.get('jwt')){
       history.push('/login')
@@ -83,19 +92,20 @@ const Dashboard = () =>{
       .catch(err => console.log(err))
     }
 
-    fetchUser();
+    fetchUser();// eslint-disable-next-line
   }, [])
 
   useEffect(() => {
-    if(questions[0].title) setInputsValue()
+    if(questions[0].title) setInputsValue()// eslint-disable-next-line
   }, [questions]);
 
   useEffect(() => {
     if(didMount.current) setInputsValue()
-    else didMount.current = true
+    else didMount.current = true// eslint-disable-next-line
   }, [numberQuestion]);
 
   const logout = () =>{
+    console.log('siema')
     cookies.remove('jwt');
     cookies.remove('user');
 
@@ -174,7 +184,7 @@ const Dashboard = () =>{
 
   const toggleQuizEditLayer = (id) =>{
     setIsShowQuizEditLayer(!isShowQuizEditLayer);
-    setActiveQuiz(id)
+    setEditQuiz(id)
     const fetchQuiz = async () =>{
       await axios.get(`${API_URL}/quizzes/${id}`)
       .then(res => {
@@ -183,15 +193,6 @@ const Dashboard = () =>{
       .catch(err => console.log(err))
     }
     fetchQuiz()
-  }
-
-  const setInputsValue = () =>{
-    setValueInputTitle(questions[0].title);
-    setValueInputQuestion(questions[numberQuestion].question);
-    setValueInputCorrectAnswer(questions[numberQuestion].correctAnswer);
-    setValueInputFirstAnswer(questions[numberQuestion].answers[0].answer);
-    setValueInputSecondAnswer(questions[numberQuestion].answers[1].answer);
-    setValueInputThirdAnswer(questions[numberQuestion].answers[2].answer);
   }
 
   const nextNumberQuiz = () =>{
@@ -235,33 +236,80 @@ const Dashboard = () =>{
       used: false
     }
 
-    await axios.put(`${API_URL}/quizzes/${activeIdQuiz}`,{
+    await axios.put(`${API_URL}/quizzes/${idEditQuiz}`,{
       quiz: newQuestions
     })
     .then(res => console.log(res))
     .catch(err => console.log(err))
   }
 
+  const toggleQuizDeleteLayer = (id) =>{
+    setIsShowQuizDeleteLayer(!isShowQuizDeleteLayer)
+    setIdDeleteQuiz(id)
+  }
+
+  const deleteQuiz = async () =>{
+    await axios.get(`${API_URL}/users/${cookies.get('user').id}`)
+    .then(async res => {
+      const indexId = res.data.quizzesID.findIndex(el => el === idDeleteQuiz);
+      let quizzesIDs = res.data.quizzesID;
+      quizzesIDs.splice(indexId, 1);
+      await axios.put(`${API_URL}/users/${cookies.get('user').id}`, {
+        quizzesID: quizzesIDs
+      })
+      .then(res => console.log(res))
+      .catch(err => console.log(err))
+    })
+    .catch(err => console.log(err))
+
+    await axios.delete(`${API_URL}/quizzes/${idDeleteQuiz}`)
+    .then(() => window.location.reload())
+    .catch(err => console.log(err))
+  }
+
   const quizzes = userQuizzes.map(quiz =>{
     return (
-      <div key={quiz.id}>
-        <Link className="block" to={`/quiz/${quiz.id}`}>{quiz.quiz[0].title}</Link>
-        <button onClick={() => toggleQuizEditLayer(quiz.id)}>edit quiz</button>
+      <div className="grid-cols-1 bg-white text-black flex flex-col text-2xl mx-5 justify-center" key={quiz.id}>
+        <Link className=" button-animation" to={`/quiz/${quiz.id}`}>{quiz.quiz[0].title}</Link>
+        <button className="self-end mt-12" onClick={() => toggleQuizEditLayer(quiz.id)}>
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-blue-600 button-animation" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          </svg>
+        </button>
+        <button className="self-end" onClick={() => toggleQuizDeleteLayer(quiz.id)}>
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-red-600 button-animation" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+        </button>
       </div>
     )
   })
 
   return(
-    <>
-      <h1>username: { userInfo.username }</h1>
-      <h1>created at: { userInfo.createdAt }</h1>
-      <div>{quizzes}</div>
-      <button onClick={logout}>Logout</button>
+    <div className="flex flex-col items-center text-black text-center mt-24">
+      {!isShowQuizDeleteLayer ?
+        <>
+          <div className="dashboard-element">username: { userInfo.username }</div>
+          <div className="dashboard-element">created at: { userInfo.createdAt }</div>
+          <button className="dashboard-element button-animation" onClick={logout}>Logout</button>
+          <div className="w-1/2 h-20vh mt-20 grid grid-cols-2">
+            {quizzes}
+          </div>
+        </>
+      :null}
       {validate ?
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded " role="alert">
-          <strong className="font-bold">{validateText}</strong>
-        </div>
+        <ValidationAlert validationText={validateText}/>
       : null}
+      {isShowQuizDeleteLayer ?
+      <div className=" absolute top-0 w-screen h-screen flex flex-col justify-center items-center bg-green-300 text-5xl">
+        <h2>Are you sure ?</h2>
+        <div className="flex flex-row justify-center mt-12 w-screen">
+          <button className="bg-green-500 mx-4 p-8 w-1/4 text-7xl button-animation text-white" onClick={deleteQuiz}>Yes</button>
+          <button className="bg-red-500 mx-4 p-3 w-1/4 text-7xl button-animation text-white" onClick={() => toggleQuizDeleteLayer('')}>No</button>
+        </div>
+      </div>
+      :null}
+
       {isShowQuizEditLayer && questions[0].title ?
         <QuizEditLayer
           numberQuestion={numberQuestion}
@@ -284,7 +332,7 @@ const Dashboard = () =>{
           toggleQuizEditLayer={toggleQuizEditLayer}
         />
       :null}
-    </>
+    </div>
   )
 }
 

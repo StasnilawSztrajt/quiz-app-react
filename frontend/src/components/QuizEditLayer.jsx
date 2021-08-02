@@ -22,49 +22,53 @@ const QuizEditLayer = ({
 }) =>{
   return(
     <>
-      <div className=" absolute h-70vh w-3/4 bg-red-400 flex justify-center items-center m-auto mt-28 flex-col rounded">
-        <div>Number of questions: {numberQuestion}/{questions.length - 1}</div>
-        <button onClick={nextNumberQuiz}>Next question</button>
-        <button onClick={previousNumberQuiz}>previous question</button>
-        <input
-          className=" w-2/4 text-4xl p-3 rounded text-black"
-          value={valueInputTitle}
-          onChange={inputHandleForTitle}
-          placeholder='Enter questions'
-        />
-        <input
-          className=" w-2/4 text-4xl p-3 rounded text-black"
-          value={valueInputQuestion}
-          onChange={inputHandleForQuestion}
-          placeholder='Enter questions'
-        />
-        <input
-          className=" w-5/12 text-2xl p-1 mt-8 rounded text-black"
-          value={valueInputCorrectAnswer}
-          onChange={inputHandleForCorrectAnswer}
-          placeholder="Enter correct answer"
-        />
-        <input
-          className=" input-create-answer"
-          value={valueInputFirstAnswer}
-          onChange={inputHandleForFirstAnswer}
-          placeholder="Enter answer"
-        />
-        <input
-          className=" input-create-answer"
-          value={valueInputSecondAnswer}
-          onChange={inputHandleForSecondAnswer}
-          placeholder="Enter answer"
-        />
-        <input
-          className=" input-create-answer"
-          value={valueInputThirdAnswer}
-          onChange={inputHandleForThirdAnswer}
-          placeholder="Enter answer"
-        />
-        <button onClick={saveEditedQuestion}>save</button>
+      <div className=" z-0 absolute top-0 w-screen h-screen bg-gradient-to-b from-green-50 to-green-300 flex justify-center items-center">
+        <div className="w-3/4 h-4/5 bg-green-200 rounded shadow-2xl flex flex-col items-center">
+          <div className="text-center text-2xl mt-10">Number of questions: {numberQuestion}/{questions.length - 1}</div>
+          <div className="flex flex-row justify-center w-4/5">
+            <button className="create-quiz-button w-1/2" onClick={nextNumberQuiz}>Next</button>
+            <button className="create-quiz-button w-1/2" onClick={previousNumberQuiz}>Previous</button>
+          </div>
+          <input
+            className="input-create-answer"
+            value={valueInputTitle}
+            onChange={inputHandleForTitle}
+            placeholder='Enter questions'
+          />
+          <input
+            className="input-create-answer"
+            value={valueInputQuestion}
+            onChange={inputHandleForQuestion}
+            placeholder='Enter questions'
+          />
+          <input
+            className="input-create-answer"
+            value={valueInputCorrectAnswer}
+            onChange={inputHandleForCorrectAnswer}
+            placeholder="Enter correct answer"
+          />
+          <input
+            className=" input-create-answer"
+            value={valueInputFirstAnswer}
+            onChange={inputHandleForFirstAnswer}
+            placeholder="Enter answer"
+          />
+          <input
+            className=" input-create-answer"
+            value={valueInputSecondAnswer}
+            onChange={inputHandleForSecondAnswer}
+            placeholder="Enter answer"
+          />
+          <input
+            className=" input-create-answer"
+            value={valueInputThirdAnswer}
+            onChange={inputHandleForThirdAnswer}
+            placeholder="Enter answer"
+          />
+          <button className="create-quiz-button" onClick={saveEditedQuestion}>save</button>
+          <button className="create-quiz-button" onClick={toggleQuizEditLayer}>hide</button>
+        </div>
       </div>
-      <button onClick={toggleQuizEditLayer}>hide</button>
     </>
   )
 }

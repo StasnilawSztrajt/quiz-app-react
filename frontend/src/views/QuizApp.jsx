@@ -3,7 +3,7 @@ import Answers from '../components/Answers.jsx'
 import QuizResult from '../components/QuizResult.jsx'
 import axios from 'axios'
 
-const API_URL = 'http://localhost:1337'
+import API_URL from '../API_URL';
 
 
 class QuizApp extends React.Component{
@@ -16,7 +16,7 @@ class QuizApp extends React.Component{
             ],
             questionNumber: 1,
             points: 0,
-            endTest: false,
+            isEndTest: false,
             isShowResult: false,
             descriptionToResult: '',
             createdBy: ''
@@ -30,7 +30,7 @@ class QuizApp extends React.Component{
             ],
             questionNumber: 1,
             points: 0,
-            endTest: false,
+            isEndTest: false,
             isShowResult: false,
             createdBy: ''
         })
@@ -45,7 +45,7 @@ class QuizApp extends React.Component{
                 .then(res => {
                     this.setState({createdBy: res.data.username})
                 })
-                .catch(() => console.log('nie znaleziono uzytkownika'))
+                .catch(() => console.log('user not found'))
 
                 await quiz.forEach((question,index) =>{
                     if(index === 0) return;
@@ -87,7 +87,7 @@ class QuizApp extends React.Component{
             }
 
             return this.setState({
-                endTest: true,
+                isEndTest: true,
             });
         }
 
@@ -109,7 +109,7 @@ class QuizApp extends React.Component{
         questions[questionNumber].answers.forEach((item,index) => {
             this.setState(prevState => ({
                 ...prevState.questions[questionNumber].answers[index].correctness =
-                        item.answer === prevState.questions[questionNumber].correctAnswer ? 'bg-green-600' : 'bg-red-600'
+                    item.answer === prevState.questions[questionNumber].correctAnswer ? 'bg-green-400' : 'bg-red-400'
             }))
         })
 
@@ -122,7 +122,7 @@ class QuizApp extends React.Component{
 
         setTimeout(() =>{
             this.nextQuestion()
-        },1000)
+        },2000)
     }
 
     showResult(){
@@ -133,26 +133,42 @@ class QuizApp extends React.Component{
 
 
     render(){
-        const {questions, points, questionNumber,endTest, isShowResult, descriptionToResult, createdBy} = this.state;
+        const {questions, points, questionNumber,isEndTest, isShowResult, descriptionToResult, createdBy} = this.state;
 
         return(
-            <div >
+            <>
                 {questions[0].title ?
-                    <div className="flex items-center justify-center m-auto h-50vh w-1/2 bg-red-400 mt-48 ">
+                    <div className="h-screen bg-gradient-to-b from-green-50 to-green-300 flex justify-center items-center">
                         {!isShowResult ?
-                        <div className=" flex flex-col items-center bg-gray-300 rounded w-4/6">
-                            <h1 className=" text-black">created by: {createdBy}</h1>
-                            <h1 className="text-3xl mt-5 text-gray-700">
-                                {questions[questionNumber].question}
-                            </h1>
-                            <div className="flex flex-col items-center w-full mb-5">
-                                {questions[questionNumber].answers.map(answer =>{
-                                    return <Answers key={answer.answer} answer={answer} checkAnswer={() =>{ this.checkAnswer(answer.answer) }}/>
-                                })}
-                            </div>
+                            <div className=" w-3/4 h-2/3 bg-green-200 rounded shadow-2xl">
+                                <h1 className=" text-xl text-center font-light">{ questions[0].title }? by { createdBy }</h1>
+                                <h1 className=" text-xl text-center font-light">{ questionNumber } / { questions.length - 1 }</h1>
 
-                            { endTest ? <button className=" top-96 mt-64 absolute text-black w-1/12 h-16 bg-white my-4 duration-100 hover:opacity-80" onClick={this.showResult.bind(this)}>Show results !</button> : null }
-                        </div>
+                                <h1 className="text-3xl text-center mt-12 uppercase">
+                                    {questions[questionNumber].question}?
+                                    <div className="p-4 border-b-4 border-green-300 opacity-50"></div>
+                                </h1>
+                                <div className="flex flex-col items-center mt-8">
+                                    {questions[questionNumber].answers.map(answer =>{
+                                        return (
+                                        <Answers
+                                            key={answer.answer}
+                                            answer={answer}
+                                            checkAnswer={() =>{ this.checkAnswer(answer.answer) }}
+                                        />
+                                        )
+                                    })}
+                                </div>
+
+                                { isEndTest ?
+                                    <button
+                                        className=" mt-6 w-full text-4xl focus:outline-none"
+                                        onClick={this.showResult.bind(this)}
+                                    >
+                                        Show results !
+                                    </button>
+                                : null }
+                            </div>
                         :null}
 
                         {isShowResult ?
@@ -165,7 +181,7 @@ class QuizApp extends React.Component{
                         :null}
                     </div>
                 : null}
-            </div>
+            </>
         )
     }
 }

@@ -1,16 +1,18 @@
-import React, {useEffect, useLayoutEffect, useState, useRef} from 'react';
+import React, {useLayoutEffect, useEffect, useState, useRef} from 'react';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 import { useHistory } from "react-router-dom";
 
 import QuizEditLayer from '../components/QuizEditLayer';
+import ValidationAlert from '../components/ValidationAlert';
 
-
-const API_URL = 'http://localhost:1337'
+import API_URL from '../API_URL';
 
 const CreateQuiz = () =>{
     const history = useHistory();
     const cookies = new Cookies();
+
+    const didMount = useRef(false);
 
     const[used, setUsed] = useState(false)
 
@@ -21,8 +23,9 @@ const CreateQuiz = () =>{
     const[valueInputSecondAnswer, setValueInputSecondAnswer] = useState('');
     const[valueInputThirdAnswer, setValueInputThirdAnswer] = useState('');
 
-    const[validate, setValidate] = useState(false);
-    const[validateText, setValidateText] = useState('');
+    let validationError = false;
+    const[validation, setValidation] = useState(false);
+    const[validationText, setValidationText] = useState('');
 
     const[questions,setQuestions] = useState([{title: ''}]);
     const[numberQuestion, setNumberQuestion] = useState(1);
@@ -32,14 +35,16 @@ const CreateQuiz = () =>{
     const [isQuizEditLayer, setIsQuizEditLayer] = useState(false);
 
     useLayoutEffect(() =>{
-        if(!cookies.get('jwt')){
-            history.push('/login')
-        }
+      if(!cookies.get('jwt')){
+        history.push('/login')
+      }// eslint-disable-next-line
     }, [])
 
-    // useEffect(() => {
-    //     setInputsValue()
-    // }, [numberQuestion]);
+    useEffect(() => {
+      if (didMount.current) setInputsValue();
+      else didMount.current = true;
+      // eslint-disable-next-line
+    }, [numberQuestion]);
 
     const inputHandleForTitle = (e) =>{
         const newValue = e.target.value;
@@ -66,8 +71,8 @@ const CreateQuiz = () =>{
         setValueInputThirdAnswer(newValue);
     }
 
-    const validation = () =>{
-        setValidate(false)
+    const validate = () =>{
+        setValidation(false)
         if(
             !valueInputTitle ||
             !valueInputQuestion ||
@@ -76,23 +81,60 @@ const CreateQuiz = () =>{
             !valueInputSecondAnswer ||
             !valueInputThirdAnswer
         ){
-            setValidateText('Complete the blank fields')
+            validationError = true
+            setValidationText('Complete the blank fields')
             setTimeout(() =>{
-                setValidate(false)
+                setValidation(false)
             }, 4000)
-            return setValidate(true)
+            return setValidation(true)
         }
+
+        else if(
+          valueInputTitle.length > 60
+        ){
+            validationError = true
+            setValidationText('The length of the title is too long')
+            setTimeout(() =>{
+                setValidation(false)
+            }, 4000)
+            return setValidation(true)
+        }
+        else if(
+          valueInputQuestion.length > 70
+        ){
+            validationError = true
+            setValidationText('The length of the question is too long')
+            setTimeout(() =>{
+                setValidation(false)
+            }, 4000)
+            return setValidation(true)
+        }
+        else if(
+          valueInputCorrectAnswer.length > 110 ||
+          valueInputFirstAnswer.length > 110 ||
+          valueInputSecondAnswer.length > 110 ||
+          valueInputThirdAnswer.length > 110
+        ){
+            validationError = true
+            setValidationText('The length of the answer is too long')
+            setTimeout(() =>{
+                setValidation(false)
+            }, 4000)
+            return setValidation(true)
+        }
+
 
         else if(
             valueInputCorrectAnswer === valueInputFirstAnswer||
             valueInputCorrectAnswer === valueInputSecondAnswer||
             valueInputCorrectAnswer === valueInputThirdAnswer
         ){
-            setValidateText('Text repeats in the answers')
+            validationError = true
+            setValidationText('Text repeats in the answers')
             setTimeout(() =>{
-                setValidate(false)
+                setValidation(false)
             }, 4000)
-            return setValidate(true)
+            return setValidation(true)
         }
 
         else if(
@@ -100,68 +142,44 @@ const CreateQuiz = () =>{
             valueInputFirstAnswer === valueInputThirdAnswer ||
             valueInputFirstAnswer === valueInputCorrectAnswer
         ){
-            setValidateText('Text repeats in the answers')
+            validationError = true
+            setValidationText('Text repeats in the answers')
             setTimeout(() =>{
-                setValidate(false)
+                setValidation(false)
             }, 4000)
-            return setValidate(true)
+            return setValidation(true)
         }
         else if(
             valueInputSecondAnswer === valueInputCorrectAnswer||
             valueInputSecondAnswer === valueInputFirstAnswer||
             valueInputSecondAnswer === valueInputThirdAnswer
         ){
-            setValidateText('Text repeats in the answers')
+            validationError = true
+            setValidationText('Text repeats in the answers')
             setTimeout(() =>{
-                setValidate(false)
+                setValidation(false)
             }, 4000)
-            return setValidate(true)
+            return setValidation(true)
         }
         else if(
             valueInputThirdAnswer === valueInputCorrectAnswer||
             valueInputThirdAnswer === valueInputFirstAnswer||
             valueInputThirdAnswer === valueInputSecondAnswer
         ){
-            setValidateText('Text repeats in the answers')
+            validationError = true
+            setValidationText('Text repeats in the answers')
             setTimeout(() =>{
-                setValidate(false)
+                setValidation(false)
             }, 4000)
-            return setValidate(true)
-        }
-    }
-
-    const addQuestionAndAnswers = async () =>{
-        setValidate(false)
-        validation()
-
-        questionsObject = {
-            question: valueInputQuestion,
-            answers: [
-                {answer: valueInputFirstAnswer, correctness: ''},
-                {answer: valueInputSecondAnswer, correctness: ''},
-                {answer: valueInputThirdAnswer, correctness: ''},
-                {answer: valueInputCorrectAnswer, correctness: ''}
-            ],
-            correctAnswer: valueInputCorrectAnswer,
-            used: false
+            return setValidation(true)
         }
 
-        const newQuestions = questions;
-        newQuestions[0] = {
-            title: valueInputTitle
+        // 60 title
+        // 70 question
+        // 110 answers
+        else{
+            validationError = false
         }
-
-        await setQuestions(newQuestions)
-
-        await setQuestions(prevState =>(
-            [...prevState, questionsObject]
-        ))
-
-        setValueInputQuestion('');
-        setValueInputCorrectAnswer('');
-        setValueInputFirstAnswer('');
-        setValueInputSecondAnswer('');
-        setValueInputThirdAnswer('');
     }
 
     const setInputsValue = () =>{
@@ -180,17 +198,13 @@ const CreateQuiz = () =>{
     }
 
     const nextNumberQuiz = () =>{
-        if(numberQuestion === questions.length - 1){
-            return
-        }
-        setNumberQuestion(numberQuestion + 1)
+      if(numberQuestion === questions.length - 1) return
+      setNumberQuestion(numberQuestion + 1);
     }
 
     const previousNumberQuiz = () =>{
-        if(numberQuestion === 1){
-            return
-        }
-        setNumberQuestion(numberQuestion - 1)
+      if(numberQuestion === 1) return
+      setNumberQuestion(numberQuestion - 1);
     }
 
     const createQuiz = async () =>{
@@ -236,9 +250,43 @@ const CreateQuiz = () =>{
         }
     }
 
-    const saveEditedQuestion = async () =>{
-        validation()
+    const addQuestionAndAnswers = () =>{
+        validate();
+        if(validationError) return;
+        setValidation(false);
 
+        questionsObject = {
+            question: valueInputQuestion,
+            answers: [
+                {answer: valueInputFirstAnswer, correctness: ''},
+                {answer: valueInputSecondAnswer, correctness: ''},
+                {answer: valueInputThirdAnswer, correctness: ''},
+                {answer: valueInputCorrectAnswer, correctness: ''}
+            ],
+            correctAnswer: valueInputCorrectAnswer,
+            used: false
+        }
+
+        const newQuestions = questions;
+        newQuestions[0] = {
+            title: valueInputTitle
+        }
+
+        setQuestions(newQuestions)
+
+        setQuestions(prevState =>(
+            [...prevState, questionsObject]
+        ))
+
+        setValueInputQuestion('');
+        setValueInputCorrectAnswer('');
+        setValueInputFirstAnswer('');
+        setValueInputSecondAnswer('');
+        setValueInputThirdAnswer('');
+    }
+
+    const saveEditedQuestion = async () =>{
+        validate()
         questionsArray = [
             {answer: valueInputFirstAnswer, correctness: ''},
             {answer: valueInputSecondAnswer, correctness: ''},
@@ -266,56 +314,67 @@ const CreateQuiz = () =>{
     return(
         <>
         {!isQuizEditLayer ?
-            <div className=" h-70vh w-3/4 bg-red-400 flex justify-center items-center m-auto mt-28 flex-col rounded">
-            <div>Counter questions: <br /> {questions.length-1}</div>
+        <div className="h-screen bg-gradient-to-b from-green-50 to-green-300 flex justify-center items-center">
+          <div className="w-3/4 h-4/5 bg-green-200 rounded shadow-2xl flex flex-col items-center">
+            <div className="text-center text-2xl mt-10">Counter questions: {questions.length-1}</div>
             <input
-                className=" w-2/4 text-4xl p-3 rounded text-black"
-                value={valueInputTitle}
-                onChange={inputHandleForTitle}
-                placeholder='Enter title'
+              className="input-create-answer"
+              value={valueInputTitle}
+              onChange={inputHandleForTitle}
+              placeholder='Enter Title'
             />
             <input
-                className=" w-2/4 text-4xl p-3 rounded text-black"
-                value={valueInputQuestion}
-                onChange={inputHandleForQuestion}
-                placeholder='Enter question'
+              className="input-create-answer"
+              value={valueInputQuestion}
+              onChange={inputHandleForQuestion}
+              placeholder='Enter question'
             />
             <input
-                className=" w-5/12 text-2xl p-1 mt-8 rounded text-black"
-                value={valueInputCorrectAnswer}
-                onChange={inputHandleForCorrectAnswer}
-                placeholder="Enter correct answer"
+              className="input-create-answer"
+              value={valueInputCorrectAnswer}
+              onChange={inputHandleForCorrectAnswer}
+              placeholder="Enter correct answer"
             />
             <input
-                className=" input-create-answer"
-                value={valueInputFirstAnswer}
-                onChange={inputHandleForFirstAnswer}
-                placeholder="Enter answer"
+              className=" input-create-answer"
+              value={valueInputFirstAnswer}
+              onChange={inputHandleForFirstAnswer}
+              placeholder="Enter answer"
             />
             <input
-                className=" input-create-answer"
-                value={valueInputSecondAnswer}
-                onChange={inputHandleForSecondAnswer}
-                placeholder="Enter answer"
+              className=" input-create-answer"
+              value={valueInputSecondAnswer}
+              onChange={inputHandleForSecondAnswer}
+              placeholder="Enter answer"
             />
             <input
-                className=" input-create-answer"
-                value={valueInputThirdAnswer}
-                onChange={inputHandleForThirdAnswer}
-                placeholder="Enter answer"
+              className=" input-create-answer"
+              value={valueInputThirdAnswer}
+              onChange={inputHandleForThirdAnswer}
+              placeholder="Enter answer"
             />
-            <button className=" text-white p-2 mt-10 border-2 hover:bg-white hover:text-black duration-150" onClick={addQuestionAndAnswers}>
-                add questions
+            <button
+              className="create-quiz-button"
+              onClick={addQuestionAndAnswers}
+            >
+              Add question
             </button>
-            <button onClick={createQuiz} className=" text-white p-2 mt-10 border-2 hover:bg-white hover:text-black duration-150">
-                Create quiz
+            <button
+              className="create-quiz-button"
+              onClick={toggleQuizEditLayer}
+            >
+              Edit questions
             </button>
-            <button onClick={toggleQuizEditLayer}>Edit questions</button>
-            {validate ?
-                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded absolute top-3/4 mt-40" role="alert">
-                    <strong className="font-bold">{validateText}</strong>
-                </div>
+            <button
+              className="create-quiz-button"
+              onClick={createQuiz}
+            >
+              Create quiz
+            </button>
+            {validation ?
+                <ValidationAlert validationText={validationText}/>
             : null}
+          </div>
         </div>
         :null}
 
