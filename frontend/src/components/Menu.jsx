@@ -7,7 +7,7 @@ const Menu = () =>{
   const cookies = new Cookies();
 
   return(
-    <nav className="z-10 absolute top-0 w-screen flex justify-around text-2xl">
+    <nav className="z-10 absolute top-2 w-screen flex justify-between text-sm sm:text-base md:text-2xl px-6 sm:px-10 md:px-20 text-green-900 button-animation">
       <Link to="/">Quizapp</Link>
       <Link to="/create-quiz">Create your own quiz</Link>
       { cookies.get('jwt') ?

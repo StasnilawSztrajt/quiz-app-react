@@ -22,7 +22,7 @@ const QuizEditLayer = ({
 }) =>{
   return(
     <>
-      <div className=" z-0 absolute top-0 w-screen h-screen bg-gradient-to-b from-green-50 to-green-300 flex justify-center items-center">
+      <div className=" z-0 absolute top-0 w-screen h-screen flex justify-center items-center">
         <div className="w-3/4 h-4/5 bg-green-200 rounded shadow-2xl flex flex-col items-center">
           <div className="text-center text-2xl mt-10">Number of questions: {numberQuestion}/{questions.length - 1}</div>
           <div className="flex flex-row justify-center w-4/5">

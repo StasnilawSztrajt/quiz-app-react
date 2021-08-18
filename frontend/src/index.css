@@ -33,7 +33,7 @@ body {
 /* create-quiz */
 
 .create-quiz-button{
-  @apply w-1/4 p-3 text-2xl mt-8 bg-white border-2 border-green-500 rounded-lg focus:outline-none hover:opacity-80 duration-100
+  @apply w-8/12 md:w-1/2 xl:w-2/6 p-2 lg:p-3 text-base md:text-lg lg:text-2xl mt-2 md:mt-4 lg:mt-6 bg-white border-2 border-green-500 rounded-lg focus:outline-none hover:opacity-80 duration-100
 }
 
 .input-create-answer{
@@ -43,7 +43,7 @@ body {
 /* dashboard */
 
 .dashboard-element{
-  @apply w-1/2 bg-white text-2xl mt-6 p-4
+  @apply w-5/6 lg:w-1/2 bg-white text-2xl mt-6 p-4
 }
 
 /* buttons */

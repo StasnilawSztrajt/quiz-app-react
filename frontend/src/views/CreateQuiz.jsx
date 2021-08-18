@@ -100,7 +100,7 @@ const CreateQuiz = () =>{
             return setValidation(true)
         }
         else if(
-          valueInputQuestion.length > 70
+          valueInputQuestion.length > 200
         ){
             validationError = true
             setValidationText('The length of the question is too long')
@@ -110,10 +110,10 @@ const CreateQuiz = () =>{
             return setValidation(true)
         }
         else if(
-          valueInputCorrectAnswer.length > 110 ||
-          valueInputFirstAnswer.length > 110 ||
-          valueInputSecondAnswer.length > 110 ||
-          valueInputThirdAnswer.length > 110
+          valueInputCorrectAnswer.length > 300 ||
+          valueInputFirstAnswer.length > 300 ||
+          valueInputSecondAnswer.length > 300 ||
+          valueInputThirdAnswer.length > 300
         ){
             validationError = true
             setValidationText('The length of the answer is too long')
@@ -174,9 +174,6 @@ const CreateQuiz = () =>{
             return setValidation(true)
         }
 
-        // 60 title
-        // 70 question
-        // 110 answers
         else{
             validationError = false
         }
@@ -208,46 +205,47 @@ const CreateQuiz = () =>{
     }
 
     const createQuiz = async () =>{
-        if(used){
-            return
-        }
-        else{
-            setUsed(true)
+      validate()
+      if(used){
+        return
+      }
+      else{
+        setUsed(true)
 
-            const id = cookies.get('user').id
+        const id = cookies.get('user').id
 
-            await axios.post(`${API_URL}/quizzes`, {
-                quiz: questions,
-                userID: id
-            })
-            .then(async res => {
-                let quizessArrayID = []
+        await axios.post(`${API_URL}/quizzes`, {
+          quiz: questions,
+          userID: id
+        })
+        .then(async res => {
+          let quizessArrayID = []
 
-                await axios.get(`${API_URL}/users/${id}`)
-                .then(response => {
-                    if(!response.data.quizzesID){
-                        quizessArrayID.push(res.data.id)
-                    }
-                    else{
-                        quizessArrayID = response.data.quizzesID
-                        quizessArrayID.push(res.data.id)
-                    }
+          await axios.get(`${API_URL}/users/${id}`)
+          .then(response => {
+            if(!response.data.quizzesID){
+              quizessArrayID.push(res.data.id)
+            }
+            else{
+              quizessArrayID = response.data.quizzesID
+              quizessArrayID.push(res.data.id)
+            }
 
-                })
-                .catch(err => console.log(err))
+          })
+          .catch(err => console.log(err))
 
-                await axios.put(`${API_URL}/users/${id}`,{
-                    quizzesID: quizessArrayID
-                })
-                .then(res => console.log(res.status))
-                .catch(err => console.log(err))
+          await axios.put(`${API_URL}/users/${id}`,{
+            quizzesID: quizessArrayID
+          })
+          .then(res => console.log(res.status))
+          .catch(err => console.log(err))
 
-                history.push('/dashboard')
-            })
-            .catch(err =>{
-                console.log(err)
-            })
-        }
+          history.push('/dashboard')
+        })
+        .catch(err =>{
+            console.log(err)
+        })
+      }
     }
 
     const addQuestionAndAnswers = () =>{
@@ -314,7 +312,7 @@ const CreateQuiz = () =>{
     return(
         <>
         {!isQuizEditLayer ?
-        <div className="h-screen bg-gradient-to-b from-green-50 to-green-300 flex justify-center items-center">
+        <div className="h-screen flex justify-center items-center">
           <div className="w-3/4 h-4/5 bg-green-200 rounded shadow-2xl flex flex-col items-center">
             <div className="text-center text-2xl mt-10">Counter questions: {questions.length-1}</div>
             <input

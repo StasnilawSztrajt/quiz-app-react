@@ -133,57 +133,63 @@ class QuizApp extends React.Component{
 
 
     render(){
-        const {questions, points, questionNumber,isEndTest, isShowResult, descriptionToResult, createdBy} = this.state;
+      const {questions, points, questionNumber,isEndTest, isShowResult, descriptionToResult, createdBy} = this.state;
 
-        return(
-            <>
-                {questions[0].title ?
-                    <div className="h-screen bg-gradient-to-b from-green-50 to-green-300 flex justify-center items-center">
-                        {!isShowResult ?
-                            <div className=" w-3/4 h-2/3 bg-green-200 rounded shadow-2xl">
-                                <h1 className=" text-xl text-center font-light">{ questions[0].title }? by { createdBy }</h1>
-                                <h1 className=" text-xl text-center font-light">{ questionNumber } / { questions.length - 1 }</h1>
+      return(
+        <>
+          {questions[0].title ?
+            <div className="h-screen lg:flex lg:justify-center lg:items-center">
+              {!isShowResult ?
+                <div className=" w-3/4 p-4 mt-28 m-auto lg:mt-auto pb-10 bg-green-200 rounded shadow-2xl ">
+                  <h1 className="text-sm md:text-base lg:text-xl text-center font-light">
+                    { questions[0].title }? by { createdBy }
+                  </h1>
+                  <h1 className="text-sm md:text-base lg:text-xl text-center font-light">
+                    { questionNumber } / { questions.length - 1 }
+                  </h1>
 
-                                <h1 className="text-3xl text-center mt-12 uppercase">
-                                    {questions[questionNumber].question}?
-                                    <div className="p-4 border-b-4 border-green-300 opacity-50"></div>
-                                </h1>
-                                <div className="flex flex-col items-center mt-8">
-                                    {questions[questionNumber].answers.map(answer =>{
-                                        return (
-                                        <Answers
-                                            key={answer.answer}
-                                            answer={answer}
-                                            checkAnswer={() =>{ this.checkAnswer(answer.answer) }}
-                                        />
-                                        )
-                                    })}
-                                </div>
+                  <h1 className="text-lg md:text-xl lg:text-3xl text-center mt-12 uppercase">
+                    {questions[questionNumber].question}?
+                    <div className="p-4 border-b-4 border-green-300 opacity-50"></div>
+                  </h1>
+                  <div className="flex flex-col items-center mt-8">
+                    {questions[questionNumber].answers.map(answer =>{
+                      return (
+                        <Answers
+                          key={answer.answer}
+                          answer={answer}
+                          checkAnswer={() =>{ this.checkAnswer(answer.answer) }}
+                        />
+                      )
+                    })}
+                  </div>
 
-                                { isEndTest ?
-                                    <button
-                                        className=" mt-6 w-full text-4xl focus:outline-none"
-                                        onClick={this.showResult.bind(this)}
-                                    >
-                                        Show results !
-                                    </button>
-                                : null }
-                            </div>
-                        :null}
-
-                        {isShowResult ?
-                            <QuizResult
-                                points={ points }
-                                questions={ questions }
-                                descriptionToResult={ descriptionToResult }
-                                restartQuiz={ this.restartQuiz.bind(this) }
-                            />
-                        :null}
+                  { isEndTest ?
+                    <div className="flex justify-center">
+                      <button
+                        className="create-quiz-button"
+                        onClick={this.showResult.bind(this)}
+                      >
+                        Show results !
+                      </button>
                     </div>
-                : null}
-            </>
-        )
-    }
+                  : null }
+                </div>
+              :null}
+
+              {isShowResult ?
+                  <QuizResult
+                    points={ points }
+                    questions={ questions }
+                    descriptionToResult={ descriptionToResult }
+                    restartQuiz={ this.restartQuiz.bind(this) }
+                  />
+              :null}
+            </div>
+          : null}
+      </>
+    )
+  }
 }
 
 export default QuizApp

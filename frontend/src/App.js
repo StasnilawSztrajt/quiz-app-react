@@ -3,7 +3,7 @@ import './index.css';
 import Menu from './components/Menu.jsx'
 import QuizApp from './views/QuizApp.jsx'
 import CreateQuiz from './views/CreateQuiz.jsx'
-import QuizzesList from './views/QuizzesList.jsx'
+import Home from './views/Home.jsx'
 import Login from './views/Login.jsx'
 import Register from './views/Register.jsx'
 import Dashboard from './views/Dashboard.jsx'
@@ -15,7 +15,7 @@ function App() {
       <Menu />
       <Switch>
         <Route exact path="/">
-          <QuizzesList />
+          <Home />
         </Route>
         <Route path="/login">
           <Login />
