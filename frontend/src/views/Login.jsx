@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from 'react'
+import React, { useLayoutEffect, useState } from 'react'
 import {useFormik} from 'formik'
 import * as Yup from 'yup'
 import axios from 'axios'
@@ -6,11 +6,14 @@ import Cookies from 'universal-cookie';
 import { Link, useHistory } from "react-router-dom";
 
 import API_URL from '../API_URL';
+import ValidationAlert from '../components/ValidationAlert';
 
 
 const Login = () =>{
   const history = useHistory();
   const cookies = new Cookies();
+
+  const[isValidateError, setValidateError] = useState(false);
 
   useLayoutEffect(() => {
     if(cookies.get('jwt')){
@@ -37,8 +40,11 @@ const Login = () =>{
         cookies.set('user', res.data.user, { time: '7d', path: '/' })
         history.push('/dashboard')
       })
-      .catch(err =>{
-        console.log(err)
+      .catch(() =>{
+          setTimeout(() =>{
+            setValidateError(false)
+          }, 4000)
+          return setValidateError(true)
       })
     }
   })
@@ -97,6 +103,9 @@ const Login = () =>{
         </Link>
       </div>
       <div className="top-3/4 absolute">
+        {isValidateError ?
+          <ValidationAlert validationText={"Login or password is invalid"}/>
+        : null}
         {touched.email && errors.email ? (
           <div className="bg-yellow-100 border-l-4 border-yellow-500 text-orange-700 p-4 w-96" role="alert">
             <p className="font-bold">Email error</p>

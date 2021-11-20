@@ -1,20 +1,31 @@
 import React from 'react'
 import { Link } from 'react-router-dom';
-import Cookies from 'universal-cookie';
 
+import { jwt } from '../const-variables/cookies'
 
 const Menu = () =>{
-  const cookies = new Cookies();
 
   return(
-    <nav className="z-10 absolute top-2 w-screen flex justify-between text-sm sm:text-base md:text-2xl px-6 sm:px-10 md:px-20 text-green-900 button-animation">
-      <Link to="/">Quizapp</Link>
-      <Link to="/create-quiz">Create your own quiz</Link>
-      { cookies.get('jwt') ?
-        <Link to="/dashboard">Dashboard</Link>
-        :
-        <Link to="/login">Login in</Link>
-      }
+    <nav className="w-screen flex justify-between text-sm sm:text-base md:text-2xl py-5  text-green-900 bg-white">
+          <Link to="/" className="font-bold button-animation ml-5">
+            Quizapp
+          </Link>
+          { jwt ?
+            <div className=''>
+              <Link to="/create-quiz" className="button-animation p-5 border-r-2 border-gray-100 text-green-900 hover:bg-gray-100">
+                Create your own quiz
+              </Link>
+              <Link to="/dashboard" className="button-animation p-5 mr-5 xl:mr-10  hover:bg-gray-100">
+                Dashboard
+              </Link>
+            </div>
+            :
+            <div>
+              <Link to="/login" className="button-animation p-5 mr-5 xl:mr-10  hover:bg-gray-100" >
+                Login in
+              </Link>
+            </div>
+          }
     </nav>
   )
 }

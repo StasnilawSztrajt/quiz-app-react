@@ -138,11 +138,11 @@ class QuizApp extends React.Component{
       return(
         <>
           {questions[0].title ?
-            <div className="h-screen lg:flex lg:justify-center lg:items-center">
+            <div className="mt-12 md:mt-16 lg:mt-20 xl:mt-24 lg:flex lg:justify-center lg:items-center">
               {!isShowResult ?
-                <div className=" w-3/4 p-4 mt-28 m-auto lg:mt-auto pb-10 bg-green-200 rounded shadow-2xl ">
+                <div className=" w-3/4 p-4 m-auto lg:mt-auto pb-10 bg-green-200 rounded shadow-2xl ">
                   <h1 className="text-sm md:text-base lg:text-xl text-center font-light">
-                    { questions[0].title }? by { createdBy }
+                    { questions[0].title } by { createdBy }
                   </h1>
                   <h1 className="text-sm md:text-base lg:text-xl text-center font-light">
                     { questionNumber } / { questions.length - 1 }

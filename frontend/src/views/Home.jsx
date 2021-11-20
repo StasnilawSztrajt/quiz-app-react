@@ -9,7 +9,7 @@ const QuizzesList = () =>{
 
   useLayoutEffect(() =>{
     const fetchQuizzes = async () =>{
-      await axios.get(`${API_URL}/quizzes/`)
+      await axios.get(`${API_URL}/quizzes`)
       .then(res =>{
         setQuizzes(res.data)
       })

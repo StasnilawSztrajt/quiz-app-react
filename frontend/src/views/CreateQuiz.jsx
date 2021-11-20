@@ -1,16 +1,15 @@
 import React, {useLayoutEffect, useEffect, useState, useRef} from 'react';
 import axios from 'axios';
-import Cookies from 'universal-cookie';
 import { useHistory } from "react-router-dom";
 
 import QuizEditLayer from '../components/QuizEditLayer';
 import ValidationAlert from '../components/ValidationAlert';
 
 import API_URL from '../API_URL';
+import { user, jwt } from '../const-variables/cookies'
 
 const CreateQuiz = () =>{
     const history = useHistory();
-    const cookies = new Cookies();
 
     const didMount = useRef(false);
 
@@ -35,7 +34,7 @@ const CreateQuiz = () =>{
     const [isQuizEditLayer, setIsQuizEditLayer] = useState(false);
 
     useLayoutEffect(() =>{
-      if(!cookies.get('jwt')){
+      if(!jwt){
         history.push('/login')
       }// eslint-disable-next-line
     }, [])
@@ -204,6 +203,7 @@ const CreateQuiz = () =>{
       setNumberQuestion(numberQuestion - 1);
     }
 
+
     const createQuiz = async () =>{
       validate()
       if(used){
@@ -212,16 +212,14 @@ const CreateQuiz = () =>{
       else{
         setUsed(true)
 
-        const id = cookies.get('user').id
-
         await axios.post(`${API_URL}/quizzes`, {
           quiz: questions,
-          userID: id
-        })
+          userID: user.id
+        }, { headers: { Authorization: `Bearer ${jwt}` } })
         .then(async res => {
           let quizessArrayID = []
 
-          await axios.get(`${API_URL}/users/${id}`)
+          await axios.get(`${API_URL}/users/${user.id}`)
           .then(response => {
             if(!response.data.quizzesID){
               quizessArrayID.push(res.data.id)
@@ -234,9 +232,9 @@ const CreateQuiz = () =>{
           })
           .catch(err => console.log(err))
 
-          await axios.put(`${API_URL}/users/${id}`,{
+          await axios.put(`${API_URL}/users/${user.id}`,{
             quizzesID: quizessArrayID
-          })
+          }, { headers: { Authorization: `Bearer ${jwt}` } })
           .then(res => console.log(res.status))
           .catch(err => console.log(err))
 
@@ -312,8 +310,8 @@ const CreateQuiz = () =>{
     return(
         <>
         {!isQuizEditLayer ?
-        <div className="h-screen flex justify-center items-center">
-          <div className="w-3/4 h-4/5 bg-green-200 rounded shadow-2xl flex flex-col items-center">
+        <div className="mt-12 md:mt-16 lg:mt-20 xl:mt-24 lg:flex lg:justify-center lg:items-center">
+          <div className="w-3/4 h-4/5 m-auto lg:mt-auto bg-green-200 rounded shadow-2xl flex flex-col items-center">
             <div className="text-center text-2xl mt-10">Counter questions: {questions.length-1}</div>
             <input
               className="input-create-answer"
@@ -372,6 +370,7 @@ const CreateQuiz = () =>{
             {validation ?
                 <ValidationAlert validationText={validationText}/>
             : null}
+            <div className='h-8'></div>
           </div>
         </div>
         :null}

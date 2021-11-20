@@ -2,11 +2,14 @@ import React, { useLayoutEffect, useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 import { useHistory } from "react-router-dom";
+
 import QuizEditLayer from '../components/QuizEditLayer';
+import ValidationAlert from '../components/ValidationAlert';
 import Quizzes from '../components/Quizzes';
 
 import API_URL from '../API_URL';
-import ValidationAlert from '../components/ValidationAlert';
+import { user, jwt } from '../const-variables/cookies'
+
 
 const Dashboard = () =>{
   const history = useHistory();
@@ -71,14 +74,12 @@ const Dashboard = () =>{
   }
 
   useLayoutEffect(() =>{
-    if(!cookies.get('jwt')){
+    if(!jwt){
       history.push('/login')
     }
 
     const fetchUser = async () =>{
-      const id = await cookies.get('user').id;
-
-      await axios.get(`${API_URL}/users/${id}`)
+      await axios.get(`${API_URL}/users/${user.id}`)
       .then(async res =>{
         setUserInfo(res.data);
         res.data.quizzesID.forEach(async id =>{
@@ -238,7 +239,7 @@ const Dashboard = () =>{
 
     await axios.put(`${API_URL}/quizzes/${idEditQuiz}`,{
       quiz: newQuestions
-    })
+    }, { headers: { Authorization: `Bearer ${jwt}` } })
     .then(res => console.log(res))
     .catch(err => console.log(err))
   }
@@ -249,17 +250,17 @@ const Dashboard = () =>{
   }
 
   const deleteQuiz = async () =>{
-    await axios.get(`${API_URL}/users/${cookies.get('user').id}`)
+    await axios.get(`${API_URL}/users/${user.id}`)
     .then(async res => {
       const indexId = res.data.quizzesID.findIndex(el => el === idDeleteQuiz);
       let quizzesIDs = res.data.quizzesID;
       quizzesIDs.splice(indexId, 1);
-      await axios.put(`${API_URL}/users/${cookies.get('user').id}`, {
+      await axios.put(`${API_URL}/users/${user.id}`, {
         quizzesID: quizzesIDs
       },
       {
         headers: {
-          Authorization: `Bearer ${cookies.get('jwt')}`
+          Authorization: `Bearer ${jwt}`
         }
       })
       .then(res => console.log(res))
@@ -270,7 +271,7 @@ const Dashboard = () =>{
     await axios.delete(`${API_URL}/quizzes/${idDeleteQuiz}`,
     {
       headers: {
-        Authorization: `Bearer ${cookies.get('jwt')}`
+        Authorization: `Bearer ${jwt}`
       }
     })
     .then(() => window.location.reload())
@@ -312,16 +313,17 @@ const Dashboard = () =>{
       : null}
       {isShowQuizDeleteLayer && !isShowQuizEditLayer ?
       <div className=" absolute top-0 w-screen h-screen flex flex-col justify-center items-center bg-green-300 text-5xl">
-        <h2>Are you sure ?</h2>
+        <h2 className='text-white'>Are you sure ?</h2>
         <div className="flex flex-row justify-center mt-12 w-screen">
           <button
-            className="bg-green-900 mx-2 md:mx-4 p-6 lg:p-4 w-1/4 lg:w-1/6 text-5xl button-animation text-white"
+            className="bg-red-500 text-white mx-2 md:mx-4 p-6 lg:p-4 w-1/4 lg:w-1/6 text-5xl rounded-lg button-animation"
             onClick={deleteQuiz}
           >
             Yes
           </button>
+
           <button
-            className="bg-red-900 mx-2 md:mx-4 p-6 lg:p-4 w-1/4 lg:w-1/6 text-5xl button-animation text-white"
+            className="bg-white text-green-500 mx-2 md:mx-4 p-6 lg:p-4 w-1/4 lg:w-1/6 text-5xl rounded-lg button-animation"
             onClick={() => toggleQuizDeleteLayer('')}
           >
             No

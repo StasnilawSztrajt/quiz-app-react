@@ -22,8 +22,8 @@ const QuizEditLayer = ({
 }) =>{
   return(
     <>
-      <div className=" z-0 absolute top-0 w-screen h-screen flex justify-center items-center">
-        <div className="w-3/4 h-4/5 bg-green-200 rounded shadow-2xl flex flex-col items-center">
+      <div className="w-screen lg:flex lg:justify-center lg:items-center">
+        <div className="w-3/4 h-4/5 m-auto lg:mt-auto bg-green-200 rounded shadow-2xl flex flex-col items-center">
           <div className="text-center text-2xl mt-10">Number of questions: {numberQuestion}/{questions.length - 1}</div>
           <div className="flex flex-row justify-center w-4/5">
             <button className="create-quiz-button w-1/2" onClick={nextNumberQuiz}>Next</button>
@@ -67,6 +67,7 @@ const QuizEditLayer = ({
           />
           <button className="create-quiz-button" onClick={saveEditedQuestion}>save</button>
           <button className="create-quiz-button" onClick={toggleQuizEditLayer}>hide</button>
+          <div className='pb-10'></div>
         </div>
       </div>
     </>
